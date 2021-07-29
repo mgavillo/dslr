@@ -1,0 +1,19 @@
+{
+  "name": "dslr",
+  "version": "1.0.0",
+  "description": "",
+  "main": "describe.js",
+  "scripts": {
+    "describe": "node ./describe.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mgavillo/dslr.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mgavillo/dslr/issues"
+  },
+  "homepage": "https://github.com/mgavillo/dslr#readme"
+}
