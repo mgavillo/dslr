@@ -1,10 +1,11 @@
+import sys
 import csv
 import numpy as np
 import pandas as pd
 import math
 import matplotlib.pyplot as plt
-import sys
 import seaborn as sns
+import argparse
 
 class Describe():
 
@@ -35,15 +36,14 @@ class Describe():
 
         sdt = sqrt(mean(abs(x - x.mean())**2))
         '''
-        std = [0 for x in range(self.N)]
+        self.std = [0 for x in range(self.N)]
         for index, column in enumerate(self.dataNum):
             deviations = []
             for x in self.dataNum[column]:
                 if not math.isnan(x):
                     deviations.append((x - self.mean[index]) ** 2)
             variance = sum(deviations) / self.count[index]
-            std[index] = math.sqrt(variance)
-        return std
+            self.std[index] = math.sqrt(variance)
 
     def calc_percentile(self, perc, j, index):
         x = perc * self.count[index]
@@ -70,13 +70,18 @@ class Describe():
 
     def show(self):
         self.calc_count_mean()
-        std = self.calc_std()
+        self.calc_std()
         q1, q2, q3, min, max = self.calc_percentiles()
-        d = [self.count, self.mean, std, min, q1, q2, q3, max]
+        d = [self.count, self.mean, self.std, min, q1, q2, q3, max]
         df = pd.DataFrame(d, columns = self.dataNum.columns, index=["count", "mean", "std", "min", "25%", "50%", "75%", "max"])
         print(df)
 
 if __name__ == "__main__":
-    data = pd.read_csv(sys.argv[1])
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-d', '--data',
+        type=str, help="CSV file containing the dataset",
+        default="./datasets/dataset_train.csv")
+    args = parser.parse_args()
+    data = pd.read_csv(args.data)
     describe = Describe(data)
     describe.show()
