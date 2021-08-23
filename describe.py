@@ -4,10 +4,9 @@ import numpy as np
 import pandas as pd
 import math
 import matplotlib.pyplot as plt
-import seaborn as sns
 import argparse
 
-class Describe():
+class Preprocess():
 
     def __init__(self, data):
         self.data = data
@@ -52,9 +51,6 @@ class Describe():
         return ret
 
     def calc_percentiles(self):
-        self.perc = self.dataNum
-        self.perc = self.perc.transform(np.sort)
-
         min = [0 for x in range(self.N)]
         max = min[:]
         q1 = min[:]
@@ -73,7 +69,15 @@ class Describe():
         self.calc_std()
         q1, q2, q3, min, max = self.calc_percentiles()
         d = [self.count, self.mean, self.std, min, q1, q2, q3, max]
-        df = pd.DataFrame(d, columns = self.dataNum.columns, index=["count", "mean", "std", "min", "25%", "50%", "75%", "max"])
+        df = pd.DataFrame(d, columns = self.dataNum.columns,
+                index=["count",
+                        "mean",
+                        "std",
+                        "min",
+                        "25%",
+                        "50%",
+                        "75%",
+                        "max"])
         print(df)
 
 if __name__ == "__main__":
@@ -83,5 +87,5 @@ if __name__ == "__main__":
         default="./datasets/dataset_train.csv")
     args = parser.parse_args()
     data = pd.read_csv(args.data)
-    describe = Describe(data)
+    describe = Preprocess(data)
     describe.show()

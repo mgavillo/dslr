@@ -1,4 +1,4 @@
-from describe import Describe
+from describe import Preprocess
 import numpy as np
 import pandas as pd
 import argparse
@@ -7,16 +7,18 @@ import argparse
 
 class LogisticRegression():
     def __init__(self, data):
-        self.d = Describe(data)
+        self.d = Preprocess(data)
         self.d.data = self.d.data.dropna()
         self.d.calc_count_mean()
         self.d.calc_std()
         self.mean = self.d.mean
         self.std = self.d.std
         self.features = self.d.dataNum.dropna()
-        self.features = self.features.loc[:, ['Herbology', 'Defense Against the Dark Arts',
-                   'Ancient Runes', 'Charms']]
-        print(self.features)
+        self.features = self.features.loc[:,
+            ['Herbology',
+            'Defense Against the Dark Arts',
+            'Ancient Runes',
+            'Charms']]
         self.labels = np.array(self.d.data.loc[:,"Hogwarts House"])
         self.n_iter = 30000
         self.eta=5e-5
@@ -44,29 +46,22 @@ class LogisticRegression():
                 gradient = np.dot(X.T, (expected_y - probability))
                 w += self.eta * gradient
             self.weights.append((w, house))
-        print(self.weights)
-        print(len(self.weights[0]))
-        print(len(self.weights[1]))
 
         np.save("weights", self.weights)
-            # errors = y - self._sigmoid(z)
 
     def _predict_one(self, x):
-
-        # for w,c in self.weights:
-        #     print(x.dot(w), c)
-        # print("--------------------")
-        i = max((x.dot(w), c) for w,c in self.weights)[1]
-        return i
+        return max((x.dot(w), c) for w,c in self.weights)[1]
     
     def predict(self, X):
         return [self._predict_one(i) for i in X]
     
     def score(self):
-
         p = self.predict(np.array(self.features))
-        print(self.labels[39], p[39])
         return sum(p == self.labels) / len(self.labels) 
+
+    def update_weights(self, weights):
+        self.weights = weights
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
