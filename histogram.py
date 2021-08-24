@@ -5,15 +5,18 @@ import matplotlib.pyplot as plt
 import argparse
 import pandas as pd
 
+def subject_split_houses(dataNum, data, subject):
+    houses = "Hogwarts House"
+    Gryffindor = dataNum.loc[data[houses] == "Gryffindor"][subject]
+    Slytherin = dataNum.loc[data[houses] == "Slytherin"][subject]
+    Ravenclaw = dataNum.loc[data[houses] == "Ravenclaw"][subject]
+    Hufflepuff = dataNum.loc[data[houses] == "Hufflepuff"][subject]
+    return Gryffindor, Slytherin, Ravenclaw, Hufflepuff
+
+
 def show_histrogram(data):
-    d = data.dataNum
-    data = data.data
-    house = "Hogwarts House"
-    subject = "Arithmancy"
-    Gryffindor = d.loc[data[house] == "Gryffindor"][subject]
-    Slytherin = d.loc[data[house] == "Slytherin"][subject]
-    Ravenclaw = d.loc[data[house] == "Ravenclaw"][subject]
-    Hufflepuff = d.loc[data[house] == "Hufflepuff"][subject]
+    Gryffindor, Slytherin, Ravenclaw, Hufflepuff
+            = subject_split_houses(data.dataNum, data.data, 'Aritmancy')
     plt.figure()
     plt.hist(Gryffindor, bins=25, alpha=0.5, label = 'Gry', color = 'r')
     plt.hist(Ravenclaw, bins=25, alpha=0.5, label = 'Rav', color = 'b')
@@ -21,18 +24,23 @@ def show_histrogram(data):
     plt.hist(Hufflepuff, bins=25, alpha=0.5, label = 'Huf', color = 'y')
     plt.legend(loc = 'upper right')
     plt.title(subject)
-    my_path = os.path.dirname(__file__)
-    my_file = "plot/histogram.png"
-    plt.savefig(os.path.join(my_path, my_file))
     plt.show()
 
-if __name__ == "__main__":
+def save_plot(file_name):
+    _path = os.path.dirname(__file__)
+    plt.savefig(os.path.join(_path, file_name))
+
+def _parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--data',
         type=str, help="CSV file containing the dataset",
         default="./datasets/dataset_train.csv")
-    args = parser.parse_args()
+    return parser.parse_args()
+
+if __name__ == "__main__":
+    args = _parse_args()
     data = pd.read_csv(args.data)
     d = Describe(data)
     show_histrogram(d)
+    save_plot("plot/histogram.png")
 

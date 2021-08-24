@@ -6,40 +6,47 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import argparse
 
-def show_pair_plot(data):
-    dataPair = data.dataNum
-    dataPair["Hogwarts House"] = data.data["Hogwarts House"]
-    dataPair = dataPair.dropna()
-    sns.set(style="whitegrid", font_scale=0.5)
-    plot = sns.pairplot(dataPair,
-        hue="Hogwarts House",
-        diag_kind="hist",
-        markers = ".",
-        height=1,
-        aspect=1,
-        plot_kws = {'edgecolor':"r", # for edge color
-             'linewidth':0, # line width of spot
-             'linestyle':'--', # line style of spot
-            })
+def prepare_data(data):
+    dataPlot = data.dataNum
+    dataPlot["Hogwarts House"] = data.data["Hogwarts House"]
+    dataPlot = dataPlot.dropna()
+    return(dataPlot)
+
+def confing_plot(plot):
     plot.fig.set_figheight(10)
     plot.fig.set_figwidth(17)
     for ax in plot.axes.flatten():
-    #     ax.set_xlabel(ax.get_xlabel(), rotation = 60)
-        ax.set_ylabel(ax.get_ylabel(), rotation = 60)
+        ax.set_ylabel(ax.get_ylabel(), rotation = 60) #rotates labels of y axis to see them
         ax.yaxis.get_label().set_horizontalalignment('right')
-    my_path = os.path.dirname(__file__)
-    my_file = "plot/pair_plot.png"
-    plt.savefig(os.path.join(my_path, my_file))
+
+def show_pair_plot(data):
+    dataPlot = prepare_data(data)
+    sns.set(style="whitegrid", font_scale=0.5)  #font size of labels
+    plot = sns.pairplot(dataPair,
+        hue="Hogwarts House",                  #diferencing colors
+        markers = ".",
+        height=1,                              #height of figure
+        aspect=1,                              #widht of figure
+        plot_kws = {'linewidth':0})            #delete point borders for scatter plots
+    config_plot(plot)
     plt.show()
 
-if __name__ == "__main__":
+def save_plot(file_name):
+    _path = os.path.dirname(__file__)
+    plt.savefig(os.path.join(_path, file_name))
+
+def _parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--data',
         type=str, help="CSV file containing the dataset",
         default="./datasets/dataset_train.csv")
-    args = parser.parse_args()
+    return parser.parse_args()
+
+if __name__ == "__main__":
+    args = _parse_args()
     data = pd.read_csv(args.data)
     d = Describe(data)
     show_pair_plot(d)
+    save_plot("plot/pair_plot.png")
 
 

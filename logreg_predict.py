@@ -12,7 +12,7 @@ def save_ret(ret):
     writer.writerows(enumerate(ret))
     f.close()
 
-if __name__ == "__main__":
+def _parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--data',
         type=str, help="CSV file containing the dataset",
@@ -20,9 +20,11 @@ if __name__ == "__main__":
     parser.add_argument('-w', '--weights',
         type=str, help="npy file containing the weights",
         default="weights.npy")
-    args = parser.parse_args()
-    data = pd.read_csv(args.data)
+    return parser.parse_args()
 
+if __name__ == "__main__":
+    args = -parse_args()
+    data = pd.read_csv(args.data)
     lr = LogisticRegression(data)
     weights = np.load(args.weights, allow_pickle = True)
     lr.update_weights(weights)

@@ -114,12 +114,15 @@ class Describe():
                         "max"])
         print(df)
 
-if __name__ == "__main__":
+def _parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--data',
         type=str, help="CSV file containing the dataset",
         default="./datasets/dataset_train.csv")
-    args = parser.parse_args()
+    return parser.parse_args()
+
+if __name__ == "__main__":
+    args = _parse_args()
     data = pd.read_csv(args.data)
     describe = Preprocess(data)
     describe.show()

@@ -10,7 +10,7 @@ class LogisticRegression():
             ['Hogwarts House', 'Herbology',
             'Defense Against the Dark Arts',
             'Ancient Runes',
-            'Charms', 'Divination']]
+            'Charms', 'Divination', 'Transfiguration']]
         self.d = Describe(self.data)
         self.mean = self.d.mean
         self.std = self.d.std
@@ -23,13 +23,18 @@ class LogisticRegression():
         self.normalize()
 
     def normalize(self):
+        '''
+        Normalize self.features to be between 0 and 1 
+        '''
         for index, column in enumerate(self.features):
             _min, _max = self.d.calc_min_max()
             for i, x in enumerate(self.features[column]):
                 self.features[column][i] = (x - _min[index]) / (_max[index] - _min[index])
-        print(self.features)
 
     def fight_against_nan(self):
+        '''
+        replace nan values by the mean of the feature
+        '''
         for index, column in enumerate(self.features):
             i = 0
             for i, x in enumerate(self.features[column]):
@@ -50,32 +55,47 @@ class LogisticRegression():
                 gradient = np.dot(X.T, (expected_y - probability))
                 w += self.eta * gradient
             self.weights.append((w, house))
+        self.save_weights()
+
+    def save_weights(self):
         np.save("weights", np.array(self.weights, dtype=object))
 
+    def update_weights(self, weights):
+        self.weights = weights
+
     def _predict_one(self, x):
+        '''
+        predict prob for one student
+        return the house with max prob between the 4 weights saved
+        '''
         return max((x.dot(w), c) for w,c in self.weights)[1]
     
     def predict(self, X):
+        '''
+        return an array of predicted houses
+        '''
         return [self._predict_one(i) for i in X]
     
     def score(self):
+        '''
+        return percentage of accuracy
+        '''
         p = self.predict(np.array(self.features))
-        return sum(p == self.labels) / len(self.labels) 
+        return sum(p == self.labels) / len(self.labels) * 100
     
     def _sklearn_score(self):
         y_pred = self.predict(np.array(self.features))
         return(accuracy_score(self.labels, y_pred))
 
-    def update_weights(self, weights):
-        self.weights = weights
-
-
-if __name__ == "__main__":
+def _parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--data',
         type=str, help="CSV file containing the dataset",
         default="./datasets/dataset_train.csv")
-    args = parser.parse_args()
+    return parser.parse_args()
+
+if __name__ == "__main__":
+    args = _parse_args()
     data = pd.read_csv(args.data)
     lr = LogisticRegression(data)
     lr.fit()

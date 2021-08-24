@@ -5,45 +5,51 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import argparse
 
-def show_pair_plot(data):
-    dataNum = data.dataNum
-    data = data.data
-    house = "Hogwarts House"
-    subject1 = "Defense Against the Dark Arts"
-    subject2 = "Astronomy"
-    
-    Gryffindor = dataNum.loc[data[house] == "Gryffindor"][subject1]
-    Gryffindor2 = dataNum.loc[data[house] == "Gryffindor"][subject2]
+def subject_split_houses(dataNum, data, subject):
+    houses = "Hogwarts House"
+    Gryffindor = dataNum.loc[data[houses] == "Gryffindor"][subject]
+    Slytherin = dataNum.loc[data[houses] == "Slytherin"][subject]
+    Ravenclaw = dataNum.loc[data[houses] == "Ravenclaw"][subject]
+    Hufflepuff = dataNum.loc[data[houses] == "Hufflepuff"][subject]
+    return Gryffindor, Slytherin, Ravenclaw, Hufflepuff
 
-    Slytherin = dataNum.loc[data[house] == "Slytherin"][subject1]
-    Slytherin2 = dataNum.loc[data[house] == "Slytherin"][subject2]
-
-    Ravenclaw = dataNum.loc[data[house] == "Ravenclaw"][subject1]
-    Ravenclaw2 = dataNum.loc[data[house] == "Ravenclaw"][subject2]
-
-    Hufflepuff = dataNum.loc[data[house] == "Hufflepuff"][subject1]
-    Hufflepuff2 = dataNum.loc[data[house] == "Hufflepuff"][subject2]
-    
-    plt.figure()
-    plt.scatter(Gryffindor, Gryffindor2, label = "Gryffindor", color='r')
-    plt.scatter(Slytherin, Slytherin2, label = "Slytherin", color='y')
-    plt.scatter(Ravenclaw, Ravenclaw2, label = "Ravenclaw", color='g')
-    plt.scatter(Hufflepuff, Hufflepuff2, label = "Hufflepuff", color='b')
+def legend_plot():
     plt.legend()
     plt.title("correlated features")
     plt.xlabel("Astronomy")
     plt.ylabel("Defense Against the Dark Arts")
-    my_path = os.path.dirname(__file__)
-    my_file = "plot/scatter_plot.png"
-    plt.savefig(os.path.join(my_path, my_file))
+
+def show_pair_plot(data, f1, f2):
+    Gry1, Sly1, Rav1, Huf1 = subject_split_houses(data.dataNum, data.data,f1)
+    Gry2, Sly2, Rav2, Huf2 = subject_split_houses(data.dataNum,data.data, f2)
+    plt.figure()
+    plt.scatter(Gry1, Gry2, label = "Gryffindor", color='r')
+    plt.scatter(Sly1, Sly2, label = "Slytherin", color='y')
+    plt.scatter(Rav1, Rav2, label = "Ravenclaw", color='g')
+    plt.scatter(Huf1, Huf2, label = "Hufflepuff", color='b')
+    legend_plot()
     plt.show()
 
-if __name__ == "__main__":
+def _parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--data',
         type=str, help="CSV file containing the dataset",
         default="./datasets/dataset_train.csv")
-    args = parser.parse_args()
+    parser.add_argument('--feature1',
+        type=str, help="First feature to scatter",
+        default="Defense Against the Dark Arts")
+    parser.add_argument('--feature2',
+        type=str, help="Second feature to scatter",
+        default="Astronomy")
+    return parser.parse_args()
+
+def save_plot(file_name):
+    _path = os.path.dirname(__file__)
+    plt.savefig(os.path.join(_path, file_name))
+
+if __name__ == "__main__":
+    args = _parse_args()
     data = pd.read_csv(args.data)
     d = Describe(data)
-    show_pair_plot(d)
+    show_pair_plot(d, args.feature1, args.feature2)
+    save_plot("plot/scatter_plot.png")
