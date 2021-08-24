@@ -1,4 +1,4 @@
-from describe import Preprocess
+from describe import Describe
 
 import os
 import matplotlib.pyplot as plt
@@ -33,6 +33,6 @@ if __name__ == "__main__":
         default="./datasets/dataset_train.csv")
     args = parser.parse_args()
     data = pd.read_csv(args.data)
-    d = Preprocess(data)
+    d = Describe(data)
     show_histrogram(d)
 
