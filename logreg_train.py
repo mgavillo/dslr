@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import argparse
 from sklearn.metrics import accuracy_score
+from tqdm import tqdm
 
 class LogisticRegression():
     def __init__(self, data, n_iter = 30000, eta = 1e-5):
@@ -49,7 +50,7 @@ class LogisticRegression():
         for house in np.unique(self.labels):
             expected_y = np.where(self.labels == house, 1, 0)
             w = np.ones(X.shape[1])
-            for _ in range(self.n_iter):
+            for _ in tqdm(range(self.n_iter), desc=house):
                 x = X.dot(w)
                 probability = self._sigmoid(x)
                 gradient = np.dot(X.T, (expected_y - probability))
@@ -85,7 +86,7 @@ class LogisticRegression():
     
     def _sklearn_score(self):
         y_pred = self.predict(np.array(self.features))
-        return(accuracy_score(self.labels, y_pred))
+        return(accuracy_score(self.labels, y_pred) * 100)
 
 def _parse_args():
     parser = argparse.ArgumentParser()
@@ -95,9 +96,15 @@ def _parse_args():
     return parser.parse_args()
 
 if __name__ == "__main__":
+    print(" _____________________________")
+    print("|      PREPROCESSING DATA     |")
+    print('|_____________________________|\n')
     args = _parse_args()
     data = pd.read_csv(args.data)
     lr = LogisticRegression(data)
+    print(lr.data.columns)
+    print(" ______________________________")
+    print("|         TRAINING DATA        |")
+    print('|______________________________|\n')
     lr.fit()
-    print("Score = ", lr.score())
-    print('sklearn_score = ', lr._sklearn_score())
+    print("\n\nScore =", lr.score(), "%")

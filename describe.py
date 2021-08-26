@@ -16,7 +16,6 @@ class Describe():
         self.count, self.mean = self.calc_count_mean(self.dataNum)
         self.std = self.calc_std(self.dataNum)
 
-
     def data_to_dataNum(self, data):
         '''
         Param : dataset with categorical and numerical values
@@ -65,7 +64,6 @@ class Describe():
     def calc_min_max(self):
         '''
         return min max calculated with sorted data
-        and count of non nan values
         '''
         min = [0 for x in range(self.N)]
         max = [0 for x in range(self.N)]
@@ -74,19 +72,19 @@ class Describe():
             max[index] = self.dataSorted[column][self.count[index] - 1]
         return min, max
    
-    def calc_percentile(self, perc, j, index):
+    def calc_percentile(self, perc, j, index) -> float:
         '''
-        calc the percentile 
+        calculate percentile dealing with float index
         '''
-        x = perc * self.count[index]
-        i = int(x)
-        ret = self.dataSorted[j][i] + ((x - int(x)) * (self.dataSorted[j][i + 1] - self.dataSorted[j][i]))
-        return ret
+        float_i = perc * self.count[index]
+        i = int(float_i)                            
+        floor = self.dataSorted[j][i]
+        ceil = self.dataSorted[j][i + 1]
+        dec_i = float_i - int(float_i)
+        value = (floor + (dec_i * (ceil - floor)))
+        return value
 
     def calc_percentiles(self):
-        '''
-        calc 3 percentiles and returns it
-        '''
         q1 = [0 for x in range(self.N)]
         q2 = [0 for x in range(self.N)]
         q3 = [0 for x in range(self.N)]
@@ -98,7 +96,8 @@ class Describe():
 
     def show(self):
         '''
-        show data calculated in creating a pandas dataframe
+        calculate measuring values
+        show data as a pandas dataframe
         '''
         q1, q2, q3 = self.calc_percentiles()
         min, max = self.calc_min_max()
@@ -124,5 +123,5 @@ def _parse_args():
 if __name__ == "__main__":
     args = _parse_args()
     data = pd.read_csv(args.data)
-    describe = Preprocess(data)
+    describe = Describe(data)
     describe.show()

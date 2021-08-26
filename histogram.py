@@ -6,6 +6,9 @@ import argparse
 import pandas as pd
 
 def subject_split_houses(dataNum, data, subject):
+    '''
+    split values of given subject in four house arrays
+    '''
     houses = "Hogwarts House"
     Gryffindor = dataNum.loc[data[houses] == "Gryffindor"][subject]
     Slytherin = dataNum.loc[data[houses] == "Slytherin"][subject]
@@ -26,16 +29,16 @@ def show_histrogram(data):
     plt.title(subject)
     plt.show()
 
-def save_plot(file_name):
-    _path = os.path.dirname(__file__)
-    plt.savefig(os.path.join(_path, file_name))
-
 def _parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--data',
         type=str, help="CSV file containing the dataset",
         default="./datasets/dataset_train.csv")
     return parser.parse_args()
+
+def save_plot(file_name):
+    _path = os.path.dirname(__file__)
+    plt.savefig(os.path.join(_path, file_name))
 
 if __name__ == "__main__":
     args = _parse_args()

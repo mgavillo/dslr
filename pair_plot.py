@@ -16,24 +16,20 @@ def confing_plot(plot):
     plot.fig.set_figheight(10)
     plot.fig.set_figwidth(17)
     for ax in plot.axes.flatten():
-        ax.set_ylabel(ax.get_ylabel(), rotation = 60) #rotates labels of y axis to see them
+        ax.set_ylabel(ax.get_ylabel(), rotation = 60) # rotates labels of y axis to see them
         ax.yaxis.get_label().set_horizontalalignment('right')
 
 def show_pair_plot(data):
     dataPlot = prepare_data(data)
-    sns.set(style="whitegrid", font_scale=0.5)  #font size of labels
+    sns.set(style="whitegrid", font_scale=0.5) # font size of labels
     plot = sns.pairplot(dataPair,
-        hue="Hogwarts House",                  #diferencing colors
+        hue="Hogwarts House", # diferencing houses with colors
         markers = ".",
-        height=1,                              #height of figure
-        aspect=1,                              #widht of figure
-        plot_kws = {'linewidth':0})            #delete point borders for scatter plots
+        height=1, # height of figure
+        aspect=1, # width of figure
+        plot_kws = {'linewidth':0}) # delete point borders for scatter plots
     config_plot(plot)
     plt.show()
-
-def save_plot(file_name):
-    _path = os.path.dirname(__file__)
-    plt.savefig(os.path.join(_path, file_name))
 
 def _parse_args():
     parser = argparse.ArgumentParser()
@@ -41,6 +37,10 @@ def _parse_args():
         type=str, help="CSV file containing the dataset",
         default="./datasets/dataset_train.csv")
     return parser.parse_args()
+
+def save_plot(file_name):
+    _path = os.path.dirname(__file__)
+    plt.savefig(os.path.join(_path, file_name))
 
 if __name__ == "__main__":
     args = _parse_args()

@@ -6,6 +6,9 @@ import matplotlib.pyplot as plt
 import argparse
 
 def subject_split_houses(dataNum, data, subject):
+    '''
+    split values of given subject in four house arrays
+    '''
     houses = "Hogwarts House"
     Gryffindor = dataNum.loc[data[houses] == "Gryffindor"][subject]
     Slytherin = dataNum.loc[data[houses] == "Slytherin"][subject]
